@@ -2,6 +2,22 @@
 
 Game::Game()
 {
+	system("pause");
+	auto a = new Orc;
+	a->Init("", 1, 1, 1, 1);
+
+	auto b = new Troll;
+	b->Init("", 1, 1, 1, 1);
+
+	auto aCard = a->getMonsterCard();
+	auto bCard = b->getMonsterCard();
+	
+	for (int i = 0; i < Monster::getMonsterCardHeight() ; i++)
+	{
+		std::cout << aCard[i] << "\t\t\t" << bCard[i] << std::endl;
+	}
+
+	return;
 	Start();
 }
 
@@ -109,7 +125,7 @@ void Game::MonsterCreation()
 
 void Game::Fight()
 {
-	auto delay = std::chrono::milliseconds(1000);
+	auto delay = std::chrono::milliseconds(fightDelay);
 	std::this_thread::sleep_for(delay);
 
 	system("cls");
@@ -141,10 +157,24 @@ void Game::Fight()
 // TODO
 void Game::DrawFightScene()
 {
-	for (int i = 0; i < 2; i++)
+	system("cls");
+
+	for (int i = 1; i <= Monster::getMonsterCardHeight(); i++)
+	{
+		std::cout << contenders[0]->getMonsterCard()[i] << "\t\t\t" << contenders[1]->getMonsterCard()[i] << std::endl;
+	}
+	std::cout << std::endl;
+
+	ShowHealthBar(contenders[0]->getHealth(), 100); //contenders[0]->getBaseHealth()
+	std::cout << "\t\t\t" << std::endl;
+	ShowHealthBar(contenders[1]->getHealth(), 100);
+
+	system("pause");
+
+	/*for (int i = 0; i < 2; i++)
 	{
 		std::cout << contenders[i]->getName() << " has " << contenders[i]->getHealth() << " hp." << std::endl;
-	}
+	}*/
 }
 
 void Game::WhoseTurnIsIt()

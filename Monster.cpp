@@ -67,9 +67,22 @@ int Monster::getSpeed() const
 	return speed;
 }
 
-std::string Monster::getMonsterCard() const
+std::vector<std::string> Monster::getMonsterCard() const
 {
-	return monsterCard;
+	const int height = Monster::getMonsterCardHeight();
+	const std::string _monsterCard = monsterCard;
+
+	std::vector<std::string> card(height);
+
+	int lastPosition = -1;
+	for (int i = 0; i < height; i++)
+	{
+		int breakPos = _monsterCard.find('\n', lastPosition + 1);
+		card[i] = _monsterCard.substr(lastPosition + 1, breakPos + 1);
+		lastPosition = breakPos;
+	}
+
+	return card;
 }
 
 int const Monster::getMonsterCardWidth()

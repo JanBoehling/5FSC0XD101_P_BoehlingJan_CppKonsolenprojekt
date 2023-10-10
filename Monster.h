@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include <iostream>
 #include <sstream>
+#include <vector>
 
 class Monster
 {
@@ -33,7 +35,7 @@ public:
     int getAttack() const;
     int getDefense() const;
     int getSpeed() const;
-    virtual std::string getMonsterCard() const;
+    std::vector<std::string> getMonsterCard() const;
     static int const getMonsterCardWidth();
     static int const getMonsterCardHeight();
 

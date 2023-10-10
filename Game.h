@@ -17,6 +17,7 @@ private:
 	Monster* contenders[2];
 	Monster* whoseTurn;
 	unsigned int roundCount = 0;
+	const int fightDelay = 500;
 
 public:
 	Game();
