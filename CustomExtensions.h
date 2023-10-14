@@ -16,7 +16,10 @@ public:
 
 			if (breakCondition == nullptr) return;
 			if (breakCondition()) break;
-			else std::cout << *variable << std::endl;
+			
+			std::cin.clear(); // Clears bad input flag
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discards input buffer with max amount of characters
+			std::cout << failText << std::endl;
 		}
 	}
 };

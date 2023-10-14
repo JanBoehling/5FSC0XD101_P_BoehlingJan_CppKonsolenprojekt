@@ -1,4 +1,6 @@
 #pragma once
+#define NOMINMAX // This fixes min() and max() from the istream
+
 #include <iostream>
 #include <thread>
 #include <chrono>

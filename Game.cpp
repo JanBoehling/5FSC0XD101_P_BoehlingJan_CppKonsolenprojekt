@@ -2,7 +2,6 @@
 
 /* TODO
 * Memory management
-* Handle incorrect input (std::cin)
 */
 
 // These two defines are from Patrick. They fix the Windows 11 console bugs with which I have extensively dealt with in my first semester assignment.
@@ -68,10 +67,16 @@ void Game::MonsterCreation()
 
 		while (1)
 		{
-			int chosenMonsterIndex = -1;
+			int chosenMonsterIndex;
+			std::cout << ">> ";
 			std::cin >> chosenMonsterIndex;
 
-			if (!(chosenMonsterIndex > 0 && chosenMonsterIndex <= avaliableMonsters.size()) || avaliableMonsters[chosenMonsterIndex - 1] == nullptr) continue;
+			if (!(chosenMonsterIndex > 0 && chosenMonsterIndex <= avaliableMonsters.size()) || avaliableMonsters[chosenMonsterIndex - 1] == nullptr)
+			{
+				std::cin.clear(); // Clears bad input flag
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discards input buffer with max amount of characters
+				continue;
+			}
 
 			contenders[i] = avaliableMonsters[chosenMonsterIndex - 1];
 			avaliableMonsters.erase(avaliableMonsters.begin() + chosenMonsterIndex - 1);
