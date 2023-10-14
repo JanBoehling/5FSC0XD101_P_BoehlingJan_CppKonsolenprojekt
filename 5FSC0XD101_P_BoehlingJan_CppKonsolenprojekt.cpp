@@ -9,7 +9,11 @@
 
 int main()
 {
-    Game();
+	while (1)
+	{
+		auto game = new Game();
+		delete game;
+	}
 
     return 0;
 }

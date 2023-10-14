@@ -1,23 +1,16 @@
 #include "Game.h"
 
+/* TODO
+* Memory management
+* Handle incorrect input (std::cin)
+*/
+
+// These two defines are from Patrick. They fix the Windows 11 console bugs with which I have extensively dealt with in my first semester assignment.
+#define SetCursorPosition(x, y) printf("\033[%d;%dH",(y), (x))
+#define Cls() printf("\033[H\033[J")
+
 Game::Game()
 {
-	system("pause");
-	auto a = new Orc;
-	a->Init("", 1, 1, 1, 1);
-
-	auto b = new Troll;
-	b->Init("", 1, 1, 1, 1);
-
-	auto aCard = a->getMonsterCard();
-	auto bCard = b->getMonsterCard();
-	
-	for (int i = 0; i < Monster::getMonsterCardHeight() ; i++)
-	{
-		std::cout << aCard[i] << "\t\t\t" << bCard[i] << std::endl;
-	}
-
-	return;
 	Start();
 }
 
@@ -27,8 +20,7 @@ void Game::Start()
 	MonsterCreation();
 	StartGameLoop();
 
-	system("cls");
-	Start();
+	Cls();
 }
 
 void Game::ShowTitleScreen()
@@ -44,7 +36,7 @@ void Game::ShowTitleScreen()
 		"          | (___  _ _ __ ___  _   _| | __ _| |_ ___  _ __|_|        \n"
 		"           \\___ \\| | '_ ` _ \\| | | | |/ _` | __/ _ \\| '__|          \n"
 		"           ____) | | | | | | | |_| | | (_| | || (_) | |             \n"
-		"          |_____/|_|_| |_| |_|\\__,_|_|\__,_|\\__\\___/|_|             \n";
+		"          |_____/|_|_| |_| |_|\\__,_|_|\\__,_|\\__\\___/|_|             \n";
 
 	std::cout << title << std::endl;
 }
@@ -53,7 +45,7 @@ void Game::StartGameLoop()
 {
 	CanTheyHurtEachother();
 	WhoseTurnIsIt();
-	DrawFightScene();
+	DrawFightScene(0);
 	Fight();
 }
 
@@ -84,7 +76,7 @@ void Game::MonsterCreation()
 			contenders[i] = avaliableMonsters[chosenMonsterIndex - 1];
 			avaliableMonsters.erase(avaliableMonsters.begin() + chosenMonsterIndex - 1);
 
-			system("cls");
+			Cls();
 
 			std::string name;
 			int health = 0;
@@ -100,7 +92,7 @@ void Game::MonsterCreation()
 			
 			contenders[i]->Init(name, health, attack, defense, speed);
 
-			system("cls");
+			Cls();
 
 			std::cout << "You created: " << contenders[i]->printStats() << std::endl;
 
@@ -114,28 +106,28 @@ void Game::MonsterCreation()
 	contenders[0]->setOpponent(contenders[1]);
 	contenders[1]->setOpponent(contenders[0]);
 
-	system("cls");
+	Cls();
 
 	std::cout << "THE CONTENDERS:\n" << contenders[0]->printStats() << '\n' << contenders[1]->printStats() << std::endl;
 	std::cout << "Press any key to start the fight!" << std::endl;
 	system("pause");
 	
-	system("cls");
+	Cls();
 }
 
 void Game::Fight()
 {
-	auto delay = std::chrono::milliseconds(fightDelay);
-	std::this_thread::sleep_for(delay);
+	//auto delay = std::chrono::milliseconds(fightDelay);
+	//std::this_thread::sleep_for(delay);
 
-	system("cls");
+	Cls();
 
 	roundCount++;
-	whoseTurn->doAttack();
+	int damage = whoseTurn->doAttack();
 
 	if (whoseTurn->getOpponent()->getHealth() <= 0.f)
 	{
-		system("cls");
+		Cls();
 		
 		std::cout << whoseTurn->getName() << " won!\n" << std::endl;
 		std::cout << "This fight took " << roundCount << " rounds.\n" << std::endl;
@@ -147,34 +139,34 @@ void Game::Fight()
 	}
 	else
 	{
-		DrawFightScene();
+		DrawFightScene(damage);
 		WhoseTurnIsIt();
 	}
 
 	Fight();
 }
 
-// TODO
-void Game::DrawFightScene()
+void Game::DrawFightScene(int damage)
 {
-	system("cls");
+	Cls();
 
-	for (int i = 1; i <= Monster::getMonsterCardHeight(); i++)
+	auto card1 = contenders[0]->getMonsterCard();
+	auto card2 = contenders[1]->getMonsterCard();
+	int height = Monster::getMonsterCardHeight();
+
+	for (int i = 0; i < height; i++)
 	{
-		std::cout << contenders[0]->getMonsterCard()[i] << "\t\t\t" << contenders[1]->getMonsterCard()[i] << std::endl;
+		std::cout << card1[i] << "\t\t\t" << card2[i] << std::endl;
 	}
 	std::cout << std::endl;
 
-	ShowHealthBar(contenders[0]->getHealth(), 100); //contenders[0]->getBaseHealth()
-	std::cout << "\t\t\t" << std::endl;
-	ShowHealthBar(contenders[1]->getHealth(), 100);
+	ShowHealthBar(contenders[0]->getHealth(), contenders[0]->getBaseHealth());
+	std::cout << "\t\t\t";
+	ShowHealthBar(contenders[1]->getHealth(), contenders[1]->getBaseHealth());
+	std::cout << std::endl;
+	DrawDamageIndicator(damage);
 
 	system("pause");
-
-	/*for (int i = 0; i < 2; i++)
-	{
-		std::cout << contenders[i]->getName() << " has " << contenders[i]->getHealth() << " hp." << std::endl;
-	}*/
 }
 
 void Game::WhoseTurnIsIt()
@@ -196,7 +188,7 @@ void Game::WhoseTurnIsIt()
 
 		std::cout << "Press any key to continue..." << std::endl;
 		system("pause");
-		system("cls");
+		Cls();
 	}
 	else
 	{
@@ -208,12 +200,12 @@ void Game::CanTheyHurtEachother()
 {
 	if (!(contenders[0]->calculateDamage() == 0.f && contenders[1]->calculateDamage() == 0.f)) return;
 
-	system("cls");
+	Cls();
 	std::cout << "One or both monster are unable to do damage!" << std::endl;
 	std::cout << "Tip: The attack of one monster should be higher than the defense of the other.\n" << std::endl;
 	std::cout << "Press any key to return to the main menu..." << std::endl;
 	system("pause");
-	system("cls");
+	Cls();
 	Start();
 }
 
@@ -245,5 +237,43 @@ void Game::ShowHealthBar(float health, float baseHealth)
 		std::cout << healthbar[i];
 	}
 	SetConsoleTextAttribute(hConsole, whiteTextColor);
-	std::cout << "}" << std::endl;
+	std::cout << "}";
+}
+
+void Game::DrawDamageIndicator(int damage)
+{
+	if (damage != 0)
+	{
+		POINT currentCursorPos;
+		GetCursorPos(&currentCursorPos);
+		int cursorHeight = currentCursorPos.y;
+
+		if (whoseTurn != nullptr && whoseTurn == contenders[1])
+		{
+			// Sets cursor position underneath the left card
+			//SetCursorPosition(0, cursorHeight + 1);
+		}
+		else if (whoseTurn != nullptr && whoseTurn == contenders[0])
+		{
+			// Sets cursor position underneath the right card
+			SetCursorPosition(Monster::getMonsterCardWidth(), cursorHeight + 1);
+			std::cout << "\t\t\t";
+		}
+
+		if (whoseTurn != nullptr)
+		{
+			std::cout
+				<< "-"
+				<< damage
+				<< "HP!"
+				<< "\t"
+				<< whoseTurn->getOpponent()->getName()
+				<< " still has "
+				<< whoseTurn->getOpponent()->getHealth()
+				<< " HP."
+				<< std::endl;
+		}
+	}
+	else std::cout << std::endl;
+	std::cout << "\n" << std::endl;
 }

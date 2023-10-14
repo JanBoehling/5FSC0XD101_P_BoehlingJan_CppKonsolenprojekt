@@ -35,18 +35,3 @@ void Goblin::setMonsterCard()
 		"|/ ------------------------------------ \\|\n"
 		" ----------------------------------------\n";
 }
-
-//std::vector<std::string> Goblin::getMonsterCard() const
-//{
-//	std::vector<std::string> card(Monster::getMonsterCardHeight());
-//
-//	int lastPosition = -1;
-//	for (int i = 0; i < Monster::getMonsterCardHeight(); i++)
-//	{
-//		int breakPos = Goblin::monsterCard.find('\n', lastPosition + 1);
-//		card[i] = Goblin::monsterCard.substr(lastPosition + 1, breakPos);
-//		lastPosition = breakPos;
-//	}
-//
-//	return card;
-//}

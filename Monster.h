@@ -7,13 +7,14 @@
 class Monster
 {
 private:
-    Monster* opponent;
+    Monster* opponent = nullptr;
     static int const monsterCardHeight = 28;
     static int const monsterCardWidth = 42;
 
 protected:
     std::string name;
     int health = 0;
+    int baseHealth = 0;
     int attack = 0;
     int defense = 0;
     int speed = 0;
@@ -26,12 +27,13 @@ public:
     virtual void setMonsterCard();
 
     int calculateDamage();
-    void doAttack();
+    int doAttack();
     void reduceHealth(int damage);
     void setOpponent(Monster* opponent);
     Monster* getOpponent() const;
     std::string getName() const;
     int getHealth() const;
+    int getBaseHealth() const;
     int getAttack() const;
     int getDefense() const;
     int getSpeed() const;

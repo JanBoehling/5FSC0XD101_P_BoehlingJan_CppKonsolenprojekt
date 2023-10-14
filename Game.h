@@ -4,6 +4,7 @@
 #include <chrono>
 #include <vector>
 #include <Windows.h>
+#include <winuser.h>
 
 #include "CustomExtensions.h"
 #include "Monster.h"
@@ -26,8 +27,9 @@ public:
 	void StartGameLoop();
 	void MonsterCreation();
 	void Fight();
-	void DrawFightScene();
+	void DrawFightScene(int damage);
 	void WhoseTurnIsIt();
 	void CanTheyHurtEachother();
 	static void ShowHealthBar(float health, float baseHealth);
+	void DrawDamageIndicator(int damage);
 };

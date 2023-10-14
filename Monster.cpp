@@ -4,6 +4,7 @@ void Monster::Init(std::string name, int health, int attack, int defense, int sp
 {
 	Monster::name = name;
 	Monster::health = health;
+	Monster::baseHealth = health;
 	Monster::defense = defense;
 	Monster::attack = attack;
 	Monster::speed = speed;
@@ -21,10 +22,11 @@ int Monster::calculateDamage()
 	return (damage < 0) ? 0 : damage;
 }
 
-void Monster::doAttack()
+int Monster::doAttack()
 {
 	int damage = calculateDamage();
 	opponent->reduceHealth(damage);
+	return damage;
 }
 
 void Monster::reduceHealth(int damage)
@@ -50,6 +52,11 @@ std::string Monster::getName() const
 int Monster::getHealth() const
 {
 	return health;
+}
+
+int Monster::getBaseHealth() const
+{
+	return baseHealth;
 }
 
 int Monster::getAttack() const
@@ -78,7 +85,7 @@ std::vector<std::string> Monster::getMonsterCard() const
 	for (int i = 0; i < height; i++)
 	{
 		int breakPos = _monsterCard.find('\n', lastPosition + 1);
-		card[i] = _monsterCard.substr(lastPosition + 1, breakPos + 1);
+		card[i] = _monsterCard.substr(lastPosition + 1, breakPos - lastPosition - 1);
 		lastPosition = breakPos;
 	}
 
