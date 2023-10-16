@@ -1,15 +1,9 @@
 #include "Game.h"
-
-/* This project needs to encompas:
-* Klassen & OOP
-* Pointer & Objekte
-* Memory Management
-* Fange unzulässigen User-Input ab
-*/
+#define ever (;;)
 
 int main()
 {
-	while (1)
+	for ever
 	{
 		auto game = new Game();
 		delete game;

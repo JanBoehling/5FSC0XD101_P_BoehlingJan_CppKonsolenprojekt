@@ -1,9 +1,5 @@
 #include "Game.h"
 
-/* TODO
-* Memory management
-*/
-
 // These two defines are from Patrick. They fix the Windows 11 console bugs with which I have extensively dealt with in my first semester assignment.
 #define SetCursorPosition(x, y) printf("\033[%d;%dH",(y), (x))
 #define Cls() printf("\033[H\033[J")
@@ -107,6 +103,13 @@ void Game::MonsterCreation()
 		std::cout << "Press any key to continue..." << std::endl;
 		system("pause");
 	}
+
+	// Is this even necessary?
+	for (auto item : avaliableMonsters)
+	{
+		delete item;
+	}
+	avaliableMonsters.clear();
 
 	contenders[0]->setOpponent(contenders[1]);
 	contenders[1]->setOpponent(contenders[0]);
@@ -243,6 +246,8 @@ void Game::ShowHealthBar(float health, float baseHealth)
 	}
 	SetConsoleTextAttribute(hConsole, whiteTextColor);
 	std::cout << "}";
+
+	delete healthbar;
 }
 
 void Game::DrawDamageIndicator(int damage)
@@ -253,12 +258,7 @@ void Game::DrawDamageIndicator(int damage)
 		GetCursorPos(&currentCursorPos);
 		int cursorHeight = currentCursorPos.y;
 
-		if (whoseTurn != nullptr && whoseTurn == contenders[1])
-		{
-			// Sets cursor position underneath the left card
-			//SetCursorPosition(0, cursorHeight + 1);
-		}
-		else if (whoseTurn != nullptr && whoseTurn == contenders[0])
+		if (whoseTurn != nullptr && whoseTurn == contenders[0])
 		{
 			// Sets cursor position underneath the right card
 			SetCursorPosition(Monster::getMonsterCardWidth(), cursorHeight + 1);

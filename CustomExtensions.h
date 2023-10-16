@@ -14,12 +14,14 @@ public:
 			std::cout << inputText << ": " << std::endl;
 			std::cin >> *variable;
 
-			if (breakCondition == nullptr) return;
+			if (breakCondition == nullptr) break;
 			if (breakCondition()) break;
 			
 			std::cin.clear(); // Clears bad input flag
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discards input buffer with max amount of characters
 			std::cout << failText << std::endl;
 		}
+
+		delete variable;
 	}
 };
