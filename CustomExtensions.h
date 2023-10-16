@@ -22,6 +22,7 @@ public:
 			std::cout << failText << std::endl;
 		}
 
-		delete variable;
+		variable = nullptr;
+		breakCondition = nullptr;
 	}
 };

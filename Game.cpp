@@ -1,8 +1,9 @@
 #include "Game.h"
 
-// These two defines are from Patrick. They fix the Windows 11 console bugs with which I have extensively dealt with in my first semester assignment.
+// The SetCursorPosition define is from Patrick. It fixes the Windows 11 console bugs with which I have extensively dealt with in my first semester assignment.
 #define SetCursorPosition(x, y) printf("\033[%d;%dH",(y), (x))
-#define Cls() printf("\033[H\033[J")
+#define cls printf("\x1b[2J\x1b[3J\x1b[0;0H")
+#define pause system("pause")
 
 Game::Game()
 {
@@ -15,7 +16,19 @@ void Game::Start()
 	MonsterCreation();
 	StartGameLoop();
 
-	Cls();
+	cls;
+}
+
+Game::~Game()
+{
+	for (int i = 0; i < contendersAmount; i++)
+	{
+		delete contenders[i];
+		contenders[i] = nullptr;
+	}
+
+	delete cursorPosition;
+	cursorPosition = nullptr;
 }
 
 void Game::ShowTitleScreen()
@@ -52,8 +65,7 @@ void Game::MonsterCreation()
 	avaliableMonsters.emplace_back(new Troll);
 	avaliableMonsters.emplace_back(new Goblin);
 
-	// 2 iterations to choose the 2 contenders
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < contendersAmount; i++)
 	{
 		std::cout << "Please choose your monster:\n" << std::endl;
 		for (int j = 0; j < avaliableMonsters.size(); j++)
@@ -63,21 +75,23 @@ void Game::MonsterCreation()
 
 		while (1)
 		{
-			int chosenMonsterIndex;
+			int chosenMonster;
 			std::cout << ">> ";
-			std::cin >> chosenMonsterIndex;
+			std::cin >> chosenMonster;
 
-			if (!(chosenMonsterIndex > 0 && chosenMonsterIndex <= avaliableMonsters.size()) || avaliableMonsters[chosenMonsterIndex - 1] == nullptr)
+			int chosenMonsterIndex = chosenMonster - 1;
+
+			if (!(chosenMonster > 0 && chosenMonster <= avaliableMonsters.size()) || avaliableMonsters[chosenMonsterIndex] == nullptr)
 			{
 				std::cin.clear(); // Clears bad input flag
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discards input buffer with max amount of characters
 				continue;
 			}
 
-			contenders[i] = avaliableMonsters[chosenMonsterIndex - 1];
-			avaliableMonsters.erase(avaliableMonsters.begin() + chosenMonsterIndex - 1);
+			contenders[i] = avaliableMonsters[chosenMonsterIndex];
+			avaliableMonsters.erase(avaliableMonsters.begin() + chosenMonster - 1);
 
-			Cls();
+			cls;
 
 			std::string name;
 			int health = 0;
@@ -93,7 +107,7 @@ void Game::MonsterCreation()
 			
 			contenders[i]->Init(name, health, attack, defense, speed);
 
-			Cls();
+			cls;
 
 			std::cout << "You created: " << contenders[i]->printStats() << std::endl;
 
@@ -101,26 +115,24 @@ void Game::MonsterCreation()
 		}
 
 		std::cout << "Press any key to continue..." << std::endl;
-		system("pause");
+		pause;
 	}
 
-	// Is this even necessary?
-	for (auto item : avaliableMonsters)
+	for (int i = 0; i < avaliableMonsters.size(); i++)
 	{
-		delete item;
+		delete avaliableMonsters.at(i);
 	}
-	avaliableMonsters.clear();
 
 	contenders[0]->setOpponent(contenders[1]);
 	contenders[1]->setOpponent(contenders[0]);
 
-	Cls();
+	cls;
 
 	std::cout << "THE CONTENDERS:\n" << contenders[0]->printStats() << '\n' << contenders[1]->printStats() << std::endl;
 	std::cout << "Press any key to start the fight!" << std::endl;
-	system("pause");
+	pause;
 	
-	Cls();
+	cls;
 }
 
 void Game::Fight()
@@ -128,20 +140,20 @@ void Game::Fight()
 	//auto delay = std::chrono::milliseconds(fightDelay);
 	//std::this_thread::sleep_for(delay);
 
-	Cls();
+	cls;
 
 	roundCount++;
 	int damage = whoseTurn->doAttack();
 
 	if (whoseTurn->getOpponent()->getHealth() <= 0.f)
 	{
-		Cls();
+		cls;
 		
 		std::cout << whoseTurn->getName() << " won!\n" << std::endl;
 		std::cout << "This fight took " << roundCount << " rounds.\n" << std::endl;
 		
 		std::cout << "Press any key to return to the menu." << std::endl;
-		system("pause");
+		pause;
 
 		return;
 	}
@@ -156,7 +168,7 @@ void Game::Fight()
 
 void Game::DrawFightScene(int damage)
 {
-	Cls();
+	cls;
 
 	auto card1 = contenders[0]->getMonsterCard();
 	auto card2 = contenders[1]->getMonsterCard();
@@ -174,7 +186,7 @@ void Game::DrawFightScene(int damage)
 	std::cout << std::endl;
 	DrawDamageIndicator(damage);
 
-	system("pause");
+	pause;
 }
 
 void Game::WhoseTurnIsIt()
@@ -183,8 +195,8 @@ void Game::WhoseTurnIsIt()
 	{
 		if (contenders[0]->getSpeed() == contenders[1]->getSpeed())
 		{
-			srand(time(NULL));
-			whoseTurn = contenders[rand()%2];
+			srand(static_cast<unsigned int>(time(NULL)));
+			whoseTurn = contenders[rand() % 2];
 		}
 		else if (contenders[0]->getSpeed() > contenders[1]->getSpeed())
 		{
@@ -195,8 +207,8 @@ void Game::WhoseTurnIsIt()
 		std::cout << whoseTurn->getName() << " was faster! It attacks first.\n\n" << std::endl;
 
 		std::cout << "Press any key to continue..." << std::endl;
-		system("pause");
-		Cls();
+		pause;
+		cls;
 	}
 	else
 	{
@@ -208,16 +220,16 @@ void Game::CanTheyHurtEachother()
 {
 	if (!(contenders[0]->calculateDamage() == 0.f && contenders[1]->calculateDamage() == 0.f)) return;
 
-	Cls();
+	cls;
 	std::cout << "One or both monster are unable to do damage!" << std::endl;
 	std::cout << "Tip: The attack of one monster should be higher than the defense of the other.\n" << std::endl;
 	std::cout << "Press any key to return to the main menu..." << std::endl;
-	system("pause");
-	Cls();
+	pause;
+	cls;
 	Start();
 }
 
-void Game::ShowHealthBar(float health, float baseHealth)
+void Game::ShowHealthBar(int health, int baseHealth)
 {
 	auto hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	const int redTextColor = 12;
@@ -226,12 +238,20 @@ void Game::ShowHealthBar(float health, float baseHealth)
 	int size = Monster::getMonsterCardWidth() - 2;
 	char* healthbar = (char*)malloc(size);
 
+	// Check if memory allocation was successful
+	if (healthbar == nullptr) return;
+
 	for (int i = 0; i < size; i++)
 	{
 		healthbar[i] = ' ';
 	}
 
-	float percent = (health / baseHealth) * size;
+	float percent = (static_cast<float>(health) / baseHealth) * size;
+
+	// Prevent buffer overrun
+	if (percent > size) {
+		return;
+	}
 
 	for (int i = 0; i < percent; i++)
 	{
@@ -247,16 +267,21 @@ void Game::ShowHealthBar(float health, float baseHealth)
 	SetConsoleTextAttribute(hConsole, whiteTextColor);
 	std::cout << "}";
 
-	delete healthbar;
+	free(healthbar);
+	healthbar = nullptr;
 }
 
 void Game::DrawDamageIndicator(int damage)
 {
 	if (damage != 0)
 	{
-		POINT currentCursorPos;
-		GetCursorPos(&currentCursorPos);
-		int cursorHeight = currentCursorPos.y;
+		if (cursorPosition == nullptr)
+		{
+			cursorPosition = new POINT;
+			GetCursorPos(cursorPosition);
+		}
+		
+		int cursorHeight = (*cursorPosition).y;
 
 		if (whoseTurn != nullptr && whoseTurn == contenders[0])
 		{

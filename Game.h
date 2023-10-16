@@ -2,8 +2,8 @@
 #define NOMINMAX // This fixes min() and max() from the istream
 
 #include <iostream>
-#include <thread>
-#include <chrono>
+//#include <thread>
+//#include <chrono>
 #include <vector>
 #include <Windows.h>
 #include <winuser.h>
@@ -17,13 +17,16 @@
 class Game
 {
 private:
+	const int contendersAmount = 2;
 	Monster* contenders[2];
 	Monster* whoseTurn;
 	unsigned int roundCount = 0;
 	const int fightDelay = 500;
+	POINT* cursorPosition;
 
 public:
 	Game();
+	~Game();
 	void Start();
 	void ShowTitleScreen();
 	void StartGameLoop();
@@ -32,6 +35,6 @@ public:
 	void DrawFightScene(int damage);
 	void WhoseTurnIsIt();
 	void CanTheyHurtEachother();
-	static void ShowHealthBar(float health, float baseHealth);
+	static void ShowHealthBar(int health, int baseHealth);
 	void DrawDamageIndicator(int damage);
 };

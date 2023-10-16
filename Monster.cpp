@@ -1,5 +1,10 @@
 #include "Monster.h"
 
+Monster::~Monster()
+{
+	opponent = nullptr;
+}
+
 void Monster::Init(std::string name, int health, int attack, int defense, int speed)
 {
 	Monster::name = name;
@@ -84,8 +89,12 @@ std::vector<std::string> Monster::getMonsterCard() const
 	int lastPosition = -1;
 	for (int i = 0; i < height; i++)
 	{
-		int breakPos = _monsterCard.find('\n', lastPosition + 1);
-		card[i] = _monsterCard.substr(lastPosition + 1, breakPos - lastPosition - 1);
+		int first = lastPosition + 1;
+		int breakPos = static_cast<unsigned int>(_monsterCard.find('\n', first));
+
+		int last = breakPos - lastPosition - 1;
+		card[i] = _monsterCard.substr(first, last);
+
 		lastPosition = breakPos;
 	}
 

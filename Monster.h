@@ -21,7 +21,7 @@ protected:
     std::string monsterCard;
 
 public:
-    virtual ~Monster() = default;
+    virtual ~Monster();
 
     void Init(std::string name, int health, int attack, int defense, int speed);
     virtual void setMonsterCard();

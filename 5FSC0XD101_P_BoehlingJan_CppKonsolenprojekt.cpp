@@ -1,5 +1,5 @@
-#include "Game.h"
 #define ever (;;)
+#include "Game.h"
 
 int main()
 {
@@ -7,6 +7,7 @@ int main()
 	{
 		auto game = new Game();
 		delete game;
+		game = nullptr;
 	}
 
     return 0;
