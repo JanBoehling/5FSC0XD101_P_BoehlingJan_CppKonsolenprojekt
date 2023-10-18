@@ -1,10 +1,13 @@
 ﻿#include "Goblin.h"
 
+/// <summary>
+/// Sets the goblin's monster card.
+/// Sources:
+/// https://www.asciiart.eu/video-games/other
+/// https://ascii.co.uk/art/goblin
+/// </summary>
 void Goblin::setMonsterCard()
 {
-	// Source: 
-	// https://www.asciiart.eu/video-games/other
-	// https://ascii.co.uk/art/goblin
 	monsterCard =
 		" ________________________________________\n"
 		"|\\ ____________________________________ /|\n"

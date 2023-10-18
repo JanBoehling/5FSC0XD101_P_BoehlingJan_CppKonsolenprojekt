@@ -10,15 +10,6 @@ Game::Game()
 	Start();
 }
 
-void Game::Start()
-{
-	ShowTitleScreen();
-	MonsterCreation();
-	StartGameLoop();
-
-	cls;
-}
-
 Game::~Game()
 {
 	for (int i = 0; i < contendersAmount; i++)
@@ -31,6 +22,21 @@ Game::~Game()
 	cursorPosition = nullptr;
 }
 
+/// <summary>
+/// Initializes the game
+/// </summary>
+void Game::Start()
+{
+	ShowTitleScreen();
+	MonsterCreation();
+	StartGameLoop();
+
+	cls;
+}
+
+/// <summary>
+/// Prints the ascii art title screen to the console
+/// </summary>
 void Game::ShowTitleScreen()
 {
 	std::string title =
@@ -49,6 +55,13 @@ void Game::ShowTitleScreen()
 	std::cout << title << std::endl;
 }
 
+/// <summary>
+/// Initializes the game loop.
+/// First it checks, whether the contenders can hurt each other,
+/// then it is determined, whose turn it is,
+/// then the fight scene is drawed
+/// and finally, the fight is started.
+/// </summary>
 void Game::StartGameLoop()
 {
 	CanTheyHurtEachother();
@@ -57,6 +70,13 @@ void Game::StartGameLoop()
 	Fight();
 }
 
+/// <summary>
+/// First, it allocates the memory for each monster using a vector.
+/// Next, it prints the possible monsters to the console, then lets the player decide, which one they wants to create.
+/// After this query, the player is asked to enter the values for the monster.
+/// This loops two times.
+/// After that, the memory for the available monsters is freed, the contenders' opponents are set and the contenders are printed to the console.
+/// </summary>
 void Game::MonsterCreation()
 {
 	std::vector<Monster*> avaliableMonsters;
@@ -135,6 +155,11 @@ void Game::MonsterCreation()
 	cls;
 }
 
+/// <summary>
+/// The damage for the current monster is calculated, then, if the health of one opponent is not zero, the fight scene is redrawn and the next monster gets the turn.
+/// Else, the fight is ended and a fight summary is printed to the console.
+/// This method is called recursively, as long as the the health of one opponent is not zero.
+/// </summary>
 void Game::Fight()
 {
 	//auto delay = std::chrono::milliseconds(fightDelay);
@@ -166,6 +191,12 @@ void Game::Fight()
 	Fight();
 }
 
+/// <summary>
+/// The monster-card-line-vectors are cashed and then displayed line by line next to each other.
+/// When the cards are finished printing, healthbars displaying their current health are printed below the cards.
+/// Lastly, a damage indicator is drawn below one card.
+/// </summary>
+/// <param name="damage">The value that is displayed by the damage indicator</param>
 void Game::DrawFightScene(int damage)
 {
 	cls;
@@ -189,6 +220,13 @@ void Game::DrawFightScene(int damage)
 	pause;
 }
 
+/// <summary>
+/// Determines, whose turn it currently is.
+/// If no monster has the turn, one is determined by their speed. The monster with the higher speed gets the turn.
+/// If both monsters have the same speed, a random contender is selected.
+/// After that, a message, who was selected, is printed to the console.
+/// If a contender already had the turn, the contender is switched.
+/// </summary>
 void Game::WhoseTurnIsIt()
 {
 	if (whoseTurn == nullptr)
@@ -216,6 +254,10 @@ void Game::WhoseTurnIsIt()
 	}
 }
 
+/// <summary>
+/// Checks, if the contenders can hurt eachother.
+/// If both contenders do zero damage, a message is printed to the console and the start method is called again.
+/// </summary>
 void Game::CanTheyHurtEachother()
 {
 	if (!(contenders[0]->calculateDamage() == 0.f && contenders[1]->calculateDamage() == 0.f)) return;
@@ -229,6 +271,14 @@ void Game::CanTheyHurtEachother()
 	Start();
 }
 
+/// <summary>
+/// Draws a colored healthbar to the screen.
+/// Allocated memory with the size of the monster card and fills the memory with whitespace chars.
+/// Then it overwrites the whitespace characters with #, for how many health the monster percentally has.
+/// Then draws the healthbar in color to the console. 
+/// </summary>
+/// <param name="health">The current health amount of the monster</param>
+/// <param name="baseHealth">The maximum health of the monster</param>
 void Game::ShowHealthBar(int health, int baseHealth)
 {
 	auto hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -271,6 +321,13 @@ void Game::ShowHealthBar(int health, int baseHealth)
 	healthbar = nullptr;
 }
 
+/// <summary>
+/// Draws a damage indicator below one of the two cards on the console.
+/// When first invoked, gets the current cursor position.
+/// If the left opponent has the turn, the cursor is set below the right card.
+/// Lastly, the indicator text is printed to the console.
+/// </summary>
+/// <param name="damage"></param>
 void Game::DrawDamageIndicator(int damage)
 {
 	if (damage != 0)

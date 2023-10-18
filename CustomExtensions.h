@@ -7,6 +7,14 @@ template <typename T>
 class CustomExtensions
 {
 public:
+	/// <summary>
+	/// Asks the user for input. 
+	/// Gets user input, then checks for break condition. If condition is not met, input is cleared and fail text is displayed.
+	/// </summary>
+	/// <param name="inputText">The prompt text</param>
+	/// <param name="variable">The variable to store the value in</param>
+	/// <param name="breakCondition">The condition that validates the input</param>
+	/// <param name="failText">The text that is displayed when input is invalid</param>
 	inline static void inputPromt(std::string inputText, T* variable, std::function<bool()> breakCondition, std::string failText)
 	{
 		while (1)

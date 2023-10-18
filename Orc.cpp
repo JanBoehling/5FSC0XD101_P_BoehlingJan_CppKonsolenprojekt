@@ -1,11 +1,14 @@
 #include "Orc.h"
 
+/// <summary>
+/// Sets the orc's monster card.
+/// Sources:
+/// https://www.asciiart.eu/video-games/other
+/// https://www.shutterstock.com/de/image-vector/orc-silhouette-monster-villain-fantasy-vector-732856054
+/// https://ascii-generator.site/
+/// </summary>
 void Orc::setMonsterCard()
 {
-	// Sources:
-	// https://www.asciiart.eu/video-games/other
-	// https://www.shutterstock.com/de/image-vector/orc-silhouette-monster-villain-fantasy-vector-732856054
-	// https://ascii-generator.site/
 	monsterCard = "________________________________________\n"
 		"|\\ ____________________________________ /|\n"
 		"| | _                                _ | |\n"
